@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // 定时重启队列处理器进程 避免内存泄漏
+        $schedule->exec('php artisan queue:restart')->dailyAt('4:00');
     }
 
     /**
