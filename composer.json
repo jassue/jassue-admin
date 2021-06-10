@@ -9,10 +9,13 @@
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "jacobcyl/ali-oss-storage": "^2.1",
         "laravel/framework": "^8.40",
         "laravel/tinker": "^2.5",
+        "maatwebsite/excel": "^3.1",
         "marc-mabe/php-enum": "^4.4",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+        "zgldh/qiniu-laravel-storage": "^0.10.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
