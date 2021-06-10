@@ -13,3 +13,8 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+/storage/laravels.conf
+/storage/laravels.json
+/storage/laravels.pid
+/storage/laravels-timer-process.pid
+/storage/laravels-custom-processes.pid

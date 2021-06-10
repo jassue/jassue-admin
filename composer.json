@@ -1,14 +1,21 @@
 {
-    "name": "laravel/laravel",
+    "name": "jassue/jassue-admin",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "Jassue Admin is an RBAC background management system built by laravel.",
+    "keywords": ["laravel", "admin", "laravel admin"],
     "license": "MIT",
+    "author": [
+        {
+            "name": "jassue",
+            "email": "jassue@163.com"
+        }
+    ],
     "require": {
         "php": "^7.3|^8.0",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "hhxsv5/laravel-s": "^3.7",
         "jacobcyl/ali-oss-storage": "^2.1",
         "laravel/framework": "^8.40",
         "laravel/tinker": "^2.5",
