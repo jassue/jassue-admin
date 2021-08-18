@@ -1,0 +1,23 @@
+image: ansible/centos7-ansible
+
+stages:
+  - deploy
+
+variables:
+  GIT_STRATEGY: none
+
+before_script:
+  - mkdir ~/.ssh/
+  - echo -e "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - export ANSIBLE_HOST_KEY_CHECKING=False
+  - echo -e "${ANSIBLE_HOSTS}" > ~/hosts
+  - echo -e "${ANSIBLE_PLAYBOOK}" > ~/playbook.yml
+
+deploy_dev:
+  only:
+    - /^v\d+\.\d+\.\d+-dev/
+  stage: deploy
+  script:
+    - ansible-playbook ~/playbook.yml -i ~/hosts --extra-vars "stage=dev server_name=dev_server tag_name=${CI_COMMIT_TAG}"
+  allow_failure: false
