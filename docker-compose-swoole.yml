@@ -1,0 +1,25 @@
+version: "3"
+services:
+  jassue-admin:
+    # Base image documentation: https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-nginx.html
+    image: jassue/laravel:swoole-7.4 # Development image: jassue/laravel:swoole-dev-7.4
+    container_name: jassue-admin
+    expose:
+      - "80"
+      - "443"
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - WEB_DOCUMENT_ROOT=/app/public
+    volumes:
+      - ./:/app
+      - ./laravel.supervisor.conf:/opt/docker/etc/supervisor.d/laravel.conf
+      - ./laravel-s.location-root.conf:/opt/docker/etc/nginx/vhost.common.d/10-location-root.conf
+      - ./laravel-s.php.conf:/opt/docker/etc/nginx/conf.d/10-php.conf
+      - ./laravel-s.location-php.conf:/opt/docker/etc/nginx/vhost.common.d/10-php.conf
+      - ./laravel-s.supervisor.conf:/opt/docker/etc/supervisor.d/php-fpm.conf
+
+networks:
+  default:
+    driver: bridge
