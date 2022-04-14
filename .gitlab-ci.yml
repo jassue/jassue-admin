@@ -20,5 +20,5 @@ deploy_dev:
   stage: deploy
   script:
     - echo -e "${DEV_ENV}" > ./.env
-    - ansible-playbook ~/playbook.yml -i ~/hosts --extra-vars "stage=dev server_name=dev_server tag_name=${CI_COMMIT_TAG} env=${DEV_ENV}"
+    - ansible-playbook ~/playbook.yml -i ~/hosts --extra-vars "stage=dev server_name=dev_server tag_name=${CI_COMMIT_TAG}"
   allow_failure: false
