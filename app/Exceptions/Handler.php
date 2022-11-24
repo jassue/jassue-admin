@@ -99,7 +99,7 @@ class Handler extends ExceptionHandler
 
                 if ($e instanceof QueryException) {
                     return $this->failed(
-                        env('APP_DEBUG') ? $e->getMessage() : $errorMsg,
+                        config('app.debug') ? $e->getMessage() : $errorMsg,
                         $errorCode
                     );
                 }
@@ -107,7 +107,7 @@ class Handler extends ExceptionHandler
                 return $this->failed($errorMsg, $errorCode);
             }
 
-            return env('APP_DEBUG') ? parent::render($request, $e) : $this->internalServerError();
+            return config('app.debug') ? parent::render($request, $e) : $this->internalServerError();
         }
 
         return parent::render($request, $e);

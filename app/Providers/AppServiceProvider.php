@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (env('APP_ENV') == 'local' && env('APP_DEBUG')) {
+        if (config('app.env') == 'local' && config('app.debug')) {
             \DB::listen(
                 function ($sql) {
                     foreach ($sql->bindings as $i => $binding) {
