@@ -20,13 +20,20 @@ class RecordSystemLog
     {
         $response = $next($request);
 
-        go(function () use ($request, $response) {
+        $this->process($request, $response);
+
+        return $response;
+    }
+
+    private function process($request, $response)
+    {
+//        go(function () use ($request, $response) {
             try {
                 $routeUri = Route::current()->uri;
                 $logService = resolve(SystemLogService::class);
 
-                if (!$logService->checkNeedRecord($routeUri)) return false;
-                if ($response->exception ?? false) return false;
+                if (!$logService->checkNeedRecord($routeUri)) return;
+                if ($response->exception ?? false) return;
 
                 $guard = Auth::guard('admin');
                 $user = $guard->user();
@@ -38,8 +45,6 @@ class RecordSystemLog
             } catch (\Exception $e) {
                 Log::info('record log error:'.$e->getMessage());
             }
-        });
-
-        return $response;
+//        });
     }
 }
