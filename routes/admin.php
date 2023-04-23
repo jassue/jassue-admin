@@ -79,6 +79,5 @@ Route::group([
             Route::post('/admin/delete', 'AdminController@delete')->middleware('can:ADMIN_DELETE');
             Route::post('/admin/reset_password', 'AdminController@resetPassword')->middleware('can:ADMIN_UPDATE');
         });
-
     });
 });

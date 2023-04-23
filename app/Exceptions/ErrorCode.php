@@ -16,7 +16,7 @@ class ErrorCode
     const INTERNAL_SERVER_ERROR = 50000;
     const SQL_ERROR = 60000;
 
-    const ErrorMsg = [
+    const ERROR_MSG = [
         self::DEFAULT => 'Default error',
         self::UNAUTHORIZED => 'Unauthenticated',
         self::FORBIDDEN => 'This action is unauthorized',

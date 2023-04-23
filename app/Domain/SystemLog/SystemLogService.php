@@ -24,7 +24,9 @@ class SystemLogService
     {
         $this->systemLogRepo = resolve(SystemLogRepository::class);
 
-        if (!is_null(self::$config)) return;
+        if (!is_null(self::$config)) {
+            return;
+        }
         self::$config = collect([
             'admin/excel_upload' => function (Request $request) {
                 return '上传excel文件，文件名称：'.$request->file('file')->getClientOriginalName();
@@ -111,7 +113,9 @@ class SystemLogService
      */
     public function create(User $user, string $uri, Request $request): void
     {
-        if (!$this->checkNeedRecord($uri)) return;
+        if (!$this->checkNeedRecord($uri)) {
+            return;
+        }
 
         $this->systemLogRepo->create([
             'operator_id' => $user->id,
@@ -144,10 +148,10 @@ class SystemLogService
     {
         $result = $this->systemLogRepo->paginate(function ($query) use ($startTime, $endTime, $adminName) {
             return $query->when(!is_null($startTime), function ($query) use ($startTime, $endTime) {
-               $query->whereBetween('created_at', [
+                $query->whereBetween('created_at', [
                    Carbon::parse($startTime)->startOfDay(),
                    Carbon::parse($endTime)->endOfDay()
-               ]);
+                ]);
             })->when(!is_null($adminName), function ($query) use ($adminName) {
                 $query->where('operator_name', 'like', "%{$adminName}%");
             })->orderBy('id', 'desc');

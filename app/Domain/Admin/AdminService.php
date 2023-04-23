@@ -92,7 +92,7 @@ class AdminService
      */
     public function updateRole(int $roleId, string $name, array $permissionIds): AdminRole
     {
-        $this->_checkRoleOperateAuth([$roleId]);
+        $this->checkRoleOperateAuth([$roleId]);
 
         return DB::transaction(function () use ($roleId, $name, $permissionIds) {
             $role = $this->adminRoleRepo->find($roleId);
@@ -132,17 +132,19 @@ class AdminService
      * @param array $operateRoleIds
      * @throws BusinessException
      */
-    private function _checkRoleOperateAuth(array $operateRoleIds): void
+    private function checkRoleOperateAuth(array $operateRoleIds): void
     {
         $this->adminRoleRepo
             ->getByManyId($operateRoleIds)
             ->each(function ($adminRole) {
-                if ($adminRole->is_preset)
+                if ($adminRole->is_preset) {
                     throw new BusinessException('系统初始角色，不能操作');
+                }
             });
 
-        if ($this->adminRepo->currentUser()->roles->pluck('id')->intersect($operateRoleIds)->isNotEmpty())
+        if ($this->adminRepo->currentUser()->roles->pluck('id')->intersect($operateRoleIds)->isNotEmpty()) {
             throw new BusinessException('该角色为自己所属角色，不能操作');
+        }
     }
 
     /**
@@ -152,7 +154,7 @@ class AdminService
      */
     public function deleteRole(int $roleId): void
     {
-        $this->_checkRoleOperateAuth([$roleId]);
+        $this->checkRoleOperateAuth([$roleId]);
 
         if ($this->adminRepo->existsByRoleIds([$roleId])) {
             throw new BusinessException('角色已关联账号，无法删除，请先解除关联');
@@ -231,7 +233,7 @@ class AdminService
      */
     public function update(int $id, array $params): void
     {
-        $this->_checkAdminOperateAuth([$id]);
+        $this->checkAdminOperateAuth([$id]);
 
         DB::transaction(function () use ($id, $params) {
             if (isset($params['password'])) {
@@ -289,8 +291,9 @@ class AdminService
      */
     public function getAllPermissionByRoles(Collection $roles): Collection
     {
-        if ($roles->contains('is_super', true))
+        if ($roles->contains('is_super', true)) {
             return PermissionEnum::getFlattenCollection();
+        }
 
         $permissionIds = $this->adminRoleRepo->getPermissionIdsByRoles($roles->pluck('id')->toArray());
 
@@ -330,13 +333,14 @@ class AdminService
      * @param array $adminIds
      * @throws BusinessException
      */
-    private function _checkAdminOperateAuth(array $adminIds): void
+    private function checkAdminOperateAuth(array $adminIds): void
     {
         if (in_array(1, $adminIds)) {
             throw new BusinessException('系统初始管理员，不能操作');
         }
-        if (in_array($this->adminRepo->currentUser()->id, $adminIds))
+        if (in_array($this->adminRepo->currentUser()->id, $adminIds)) {
             throw new BusinessException('无法对自己进行操作');
+        }
     }
 
     /**
@@ -347,7 +351,7 @@ class AdminService
      */
     public function resetPassword(array $ids, string $password): void
     {
-        $this->_checkAdminOperateAuth($ids);
+        $this->checkAdminOperateAuth($ids);
         $this->adminRepo->update($ids, [
             'password' => bcrypt($password)
         ]);
@@ -360,7 +364,7 @@ class AdminService
      */
     public function delete(array $ids): void
     {
-        $this->_checkAdminOperateAuth($ids);
+        $this->checkAdminOperateAuth($ids);
 
         DB::transaction(function () use ($ids) {
             $this->adminRepo->delete($ids);

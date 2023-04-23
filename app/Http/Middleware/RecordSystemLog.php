@@ -28,23 +28,25 @@ class RecordSystemLog
     private function process($request, $response)
     {
 //        go(function () use ($request, $response) {
-            try {
-                $routeUri = Route::current()->uri;
-                $logService = resolve(SystemLogService::class);
-
-                if (!$logService->checkNeedRecord($routeUri)) return;
-                if ($response->exception ?? false) return;
-
-                $guard = Auth::guard('admin');
-                $user = $guard->user();
-                if (!$user && isset($response->original['data']['access_token'])) {
-                    $request->headers->set('Authorization', 'Bearer ' . $response->original['data']['access_token']);
-                    $user = $guard->user();
-                }
-                $user instanceof User && $logService->create($user, $routeUri, $request);
-            } catch (\Exception $e) {
-                Log::info('record log error:'.$e->getMessage());
+        try {
+            $routeUri = Route::current()->uri;
+            $logService = resolve(SystemLogService::class);
+            if (!$logService->checkNeedRecord($routeUri)) {
+                return;
             }
+            if ($response->exception ?? false) {
+                return;
+            }
+            $guard = Auth::guard('admin');
+            $user = $guard->user();
+            if (!$user && isset($response->original['data']['access_token'])) {
+                $request->headers->set('Authorization', 'Bearer ' . $response->original['data']['access_token']);
+                $user = $guard->user();
+            }
+            $user instanceof User && $logService->create($user, $routeUri, $request);
+        } catch (\Exception $e) {
+            Log::info('record log error:'.$e->getMessage());
+        }
 //        });
     }
 }

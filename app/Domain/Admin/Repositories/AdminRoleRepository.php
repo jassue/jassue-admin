@@ -63,11 +63,13 @@ class AdminRoleRepository extends BaseRepository
         $needDeleteIds = $dbPermissionIds->diff(collect($permissionIds));
         $needInsertIds = collect($permissionIds)->diff($dbPermissionIds);
 
-        if ($needDeleteIds->isNotEmpty())
+        if ($needDeleteIds->isNotEmpty()) {
             $this->unbindPermission($roleId, $needDeleteIds->toArray());
+        }
 
-        if ($needInsertIds->isNotEmpty())
+        if ($needInsertIds->isNotEmpty()) {
             $this->bindPermission($roleId, $needInsertIds->toArray());
+        }
     }
 
     /**

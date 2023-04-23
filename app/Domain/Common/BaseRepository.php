@@ -14,7 +14,7 @@ abstract class BaseRepository
      *
      * @return string
      */
-    public abstract function model(): string;
+    abstract public function model(): string;
 
     /**
      * @return Builder
@@ -94,10 +94,11 @@ abstract class BaseRepository
      */
     public function update($id, array $data, string $attribute = ''): int
     {
-        if ($attribute)
+        if ($attribute) {
             return $this->query()->where($attribute, '=', $id)->update($data);
-        else
+        } else {
             return $this->query()->whereKey($id)->update($data);
+        }
     }
 
     /**

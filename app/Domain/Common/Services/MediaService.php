@@ -97,12 +97,15 @@ class MediaService
             switch ($uploadImageTypeEnum->getValue()) {
                 case UploadImageTypeEnum::BASE64:
                     $base64String = explode(',', $image);
-                    if(count($base64String) != 2)
+                    if (count($base64String) != 2) {
                         throw new BusinessException('base64编码错误');
-                    if (!preg_match('/^(data:\s*image\/(\w+);base64,)/', $image, $result))
+                    }
+                    if (!preg_match('/^(data:\s*image\/(\w+);base64,)/', $image, $result)) {
                         throw new BusinessException('非法文件上传');
-                    if(!in_array($result[2], ["png", "jpg","gif","jpeg"]))
+                    }
+                    if (!in_array($result[2], ["png", "jpg","gif","jpeg"])) {
                         throw new BusinessException('请上传格式为png、jpg、gif、jpeg的图片');
+                    }
                     $path = self::makeFaceDir($business).'/'.Str::uuid().'.'.$result[2];
                     if (!$storage->put($path, base64_decode($base64String[1]))) {
                         throw new BusinessException('上传失败');
@@ -130,7 +133,7 @@ class MediaService
                 'src' => $path
             ])->id,
             'path' => $path,
-            'url' =>  $this->getUrlByPath(StorageDriverTypeEnum::byName($this->storageSetting->getDetail()['default']), $path)
+            'url' => $this->getUrlByPath(StorageDriverTypeEnum::byName($this->storageSetting->getDetail()['default']), $path)
         ];
     }
 
@@ -142,7 +145,9 @@ class MediaService
      */
     public function getUrlById($mediaId): string
     {
-        if (empty($mediaId)) return '';
+        if (empty($mediaId)) {
+            return '';
+        }
 
         $cacheKey = self::MEDIA_CACHE_KEY_PRE . $mediaId;
         if (Cache::has($cacheKey)) {

@@ -8,10 +8,10 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 class StorageDriverTypeEnum extends BaseEnum
 {
     // 本地
-    const public = null;
+    const PUBLIC = null;
 
     // 阿里云
-    const oss = [
+    const OSS = [
         'access_key_id' => null,
         'access_key_secret' => null,
         'bucket' => null,
@@ -20,7 +20,7 @@ class StorageDriverTypeEnum extends BaseEnum
     ];
 
     // 七牛云
-    const qiniu = [
+    const QINIU = [
         'access_key' => null,
         'bucket' => null,
         'domain' => null,
@@ -29,15 +29,24 @@ class StorageDriverTypeEnum extends BaseEnum
     ];
 
     /**
+     * 获取驱动名称
+     * @return string
+     */
+    public function getDiskName(): string
+    {
+        return strtolower($this->getName());
+    }
+
+    /**
      * @param $setting
      * @return array
      */
     public function buildFilesystemsConfig($setting): array
     {
-        switch ($this->getName()) {
+        switch ($this->getDiskName()) {
             case 'oss':
                 $config = [
-                    'driver'        => $this->getName(),
+                    'driver'        => $this->getDiskName(),
                     'access_id'     => $setting['access_key_id'],
                     'access_key'    => $setting['access_key_secret'],
                     'bucket'        => $setting['bucket'],
@@ -51,7 +60,7 @@ class StorageDriverTypeEnum extends BaseEnum
                 break;
             case 'qiniu':
                 $config = [
-                    'driver'  => $this->getName(),
+                    'driver'  => $this->getDiskName(),
                     'domains' => [
                         'default'   => $setting['domain'],
                         'https'     => $setting['domain'],
@@ -78,7 +87,7 @@ class StorageDriverTypeEnum extends BaseEnum
      */
     public function getUrl(Filesystem $storage, $setting, string $path)
     {
-        switch ($this->getName()) {
+        switch ($this->getDiskName()) {
             case 'qiniu':
                 $isSSL = $setting['is_ssl'];
                 $url = $storage->url(

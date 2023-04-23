@@ -45,7 +45,7 @@ class SettingController extends BaseController
     {
         try {
             $settingKey = SettingKeyEnum::byName($request->input('key'));
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new BusinessException('未定义的配置项');
         }
 

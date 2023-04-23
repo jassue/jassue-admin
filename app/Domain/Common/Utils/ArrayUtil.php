@@ -18,7 +18,9 @@ class ArrayUtil
         foreach ($data as $k => $v) {
             if ($v[$pName] == $pid) {
                 $v['children'] = self::getTreeList($data, $v[$pidName], $pName, $pidName);
-                if (empty($v['children'])) unset($v['children']);
+                if (empty($v['children'])) {
+                    unset($v['children']);
+                }
                 $tree[] = $v;
                 unset($data[$k]);
             }

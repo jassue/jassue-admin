@@ -40,7 +40,7 @@ class AuthController extends BaseController
 
         $admin = $this->adminService->loginByAccount($request->input('mobile'), $request->input('password'));
 
-        return $this->success($this->_buildTokenOutput(auth(self::GUARD_NAME)->login($admin)));
+        return $this->success($this->buildTokenOutput(auth(self::GUARD_NAME)->login($admin)));
     }
 
     /**
@@ -64,7 +64,7 @@ class AuthController extends BaseController
      * @param string $token
      * @return array
      */
-    private function _buildTokenOutput(string $token)
+    private function buildTokenOutput(string $token)
     {
         return [
             'access_token' => $token,

@@ -71,7 +71,9 @@ class Handler extends ExceptionHandler
     public function shouldCustomReturn(Throwable $e)
     {
         foreach (array_keys($this->customReport) as $report) {
-            if ($e instanceof $report) return $report;
+            if ($e instanceof $report) {
+                return $report;
+            }
         }
         return false;
     }
@@ -87,7 +89,7 @@ class Handler extends ExceptionHandler
         if ($request->expectsJson() || $request->isJson()) {
             if ($report = $this->shouldCustomReturn($e)) {
                 $errorCode = $this->customReport[$report];
-                $errorMsg = ErrorCode::ErrorMsg[$errorCode] ?? $e->getMessage();
+                $errorMsg = ErrorCode::ERROR_MSG[$errorCode] ?? $e->getMessage();
 
                 if ($e instanceof ValidationException) {
                     return $this->failed(collect($e->errors())->first()[0], $errorCode);

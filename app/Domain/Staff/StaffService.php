@@ -147,7 +147,9 @@ class StaffService
             $updateData = [];
             foreach ($params as $key => $value) {
                 if (in_array($key, $staff->getFillable())) {
-                    if ($key == 'avatar_id' && empty($value)) continue;
+                    if ($key == 'avatar_id' && empty($value)) {
+                        continue;
+                    }
                     $updateData[$key] = is_null($value) ? '' : $value;
                     $staff->$key = $updateData[$key];
                 }
@@ -172,11 +174,13 @@ class StaffService
      */
     public function delete(array $ids): void
     {
-        if (in_array(1, $ids))
+        if (in_array(1, $ids)) {
             throw new BusinessException('系统初始人员，不能删除');
+        }
 
-        if (in_array($this->adminRepo->currentUser()->staff_id, $ids))
+        if (in_array($this->adminRepo->currentUser()->staff_id, $ids)) {
             throw new BusinessException('不能删除自己');
+        }
 
         DB::transaction(function () use ($ids) {
             $this->staffRepo->delete($ids);

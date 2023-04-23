@@ -64,6 +64,6 @@ trait ApiResponse
      */
     public function internalServerError()
     {
-        return $this->failed(ErrorCode::ErrorMsg[ErrorCode::INTERNAL_SERVER_ERROR], ErrorCode::INTERNAL_SERVER_ERROR, FResponse::HTTP_INTERNAL_SERVER_ERROR);
+        return $this->failed(ErrorCode::ERROR_MSG[ErrorCode::INTERNAL_SERVER_ERROR], ErrorCode::INTERNAL_SERVER_ERROR, FResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

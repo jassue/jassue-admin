@@ -17,7 +17,7 @@ class Storage extends BaseSetting
     protected function getDefaultValues(): array
     {
         return [
-            'default' => 'public',
+            'default' => 'PUBLIC',
             'driver' => StorageDriverTypeEnum::getConstants()
         ];
     }
@@ -28,14 +28,14 @@ class Storage extends BaseSetting
             [
                 'data.default' => 'required|in:'.implode(',', StorageDriverTypeEnum::getNames()),
                 'data.driver' => 'required',
-                'data.driver.oss' => 'required|array',
-                'data.driver.qiniu' => 'required|array'
+                'data.driver.OSS' => 'required|array',
+                'data.driver.QINIU' => 'required|array'
             ],
             [
                 'data.default.*' => '默认存储驱动配置错误',
                 'data.driver.*' => '存储驱动配置错误',
-                'data.driver.oss.*' => '阿里云对象存储驱动配置错误',
-                'data.driver.qiniu.*' => '七牛云对象存储配置错误'
+                'data.driver.OSS.*' => '阿里云对象存储驱动配置错误',
+                'data.driver.QINIU.*' => '七牛云对象存储配置错误'
             ]
         ];
     }
@@ -48,9 +48,9 @@ class Storage extends BaseSetting
     {
         $config = $driverType->buildFilesystemsConfig($this->getDetail()['driver'][$driverType->getName()]);
 
-        !empty($config) && Config::set("filesystems.disks.{$driverType->getName()}", $config);
+        !empty($config) && Config::set("filesystems.disks.{$driverType->getDiskName()}", $config);
 
-        return StorageFacade::disk($driverType->getName());
+        return StorageFacade::disk($driverType->getDiskName());
     }
 
     /**

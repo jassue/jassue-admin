@@ -5,7 +5,8 @@ namespace App\Domain\Admin\Config;
 use App\Domain\Common\BaseEnum;
 use Illuminate\Support\Collection;
 
-class PermissionEnum extends BaseEnum {
+class PermissionEnum extends BaseEnum
+{
     const DASHBOARD = '仪表盘';
 
     const SYSTEM_CONFIG = '系统配置';
