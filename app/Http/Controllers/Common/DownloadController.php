@@ -28,6 +28,6 @@ class DownloadController extends Controller
 
         $templateInfo = ExcelTemplateEnum::byName($request->input('type'));
 
-        return response()->download(storage_path($templateInfo->getValue()['path']), $templateInfo->getValue()['name']);
+        return response()->download(resource_path($templateInfo->getValue()['path']), $templateInfo->getValue()['name']);
     }
 }
