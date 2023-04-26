@@ -1,24 +1,141 @@
-image: ansible/centos7-ansible
+image: ${DOCKER_REGISTRY}/${DOCKER_REGISTRY_NAMESPACE}/workspace-7.4
 
 stages:
+  - build
+  - test
+  - dockerize
   - deploy
 
 variables:
-  GIT_STRATEGY: none
+  VERSION: $CI_COMMIT_SHORT_SHA
+  DOCKER_IMAGE: $CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
 
 before_script:
-  - mkdir ~/.ssh/
-  - echo -e "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
-  - chmod 600 ~/.ssh/id_rsa
-  - export ANSIBLE_HOST_KEY_CHECKING=False
-  - echo -e "${ANSIBLE_HOSTS}" > ~/hosts
-  - echo -e "${ANSIBLE_PLAYBOOK}" > ~/playbook.yml
+  - if [[ $CI_COMMIT_BRANCH == "master" ]] ; then
+      VERSION=latest;
+    fi
+  - if [[ $CI_COMMIT_BRANCH =~ ^feature- ]] ; then
+      VERSION=$CI_COMMIT_BRANCH;
+    fi
+  - if [ ! -z "$CI_COMMIT_TAG" ] ; then
+      VERSION=$CI_COMMIT_TAG;
+    fi
+  - DOCKER_IMAGE=$CI_PROJECT_NAME:$VERSION
+  - echo $VERSION
+
+composer:
+  stage: build
+  cache:
+    key:
+      files:
+        - composer.json
+    paths:
+      - vendor
+  script:
+    - if [ ! -x "vendor" ] ; then
+        echo 'vendor not exists';
+        composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --no-dev;
+      else
+        echo 'vendor exists';
+      fi
+    - composer info
+
+npm:
+  image: node:16.12.0
+  stage: build
+  cache:
+    key:
+      files:
+        - package.json
+        - yarn.lock
+    paths:
+      - node_modules
+  script:
+    - if [ ! -x "node_modules" ] ; then
+        echo 'node_modules not exists';
+        yarn install --frozen-lockfile;
+      else
+        echo 'node_modules exists';
+      fi
+    - git clean -d -f public/
+    - node -v
+    - export NODE_OPTIONS=--max_old_space_size=16384
+    - free -m
+    - npm run production
+  artifacts:
+    expire_in: 7 day
+    paths:
+      - public/js/
+      - public/css/
+      - public/mix-manifest.json
+
+codestyle:
+  stage: test
+  script:
+    - composer run lint
+  except:
+    - master
+    - tags
+
+phpunit:
+  stage: test
+  cache:
+    key:
+      files:
+        - composer.json
+    paths:
+      - vendor
+    policy: pull
+  script:
+    - cp .env.example .env
+    - php artisan key:generate
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --dev
+    - ./vendor/bin/phpunit -d memory_limit=-1  --coverage-text --colors=never
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-/'
+      when: manual
+  allow_failure: true
+
+build-image:
+  image: docker:20.10.14
+  stage: dockerize
+  dependencies:
+    - npm
+  cache:
+    key:
+      files:
+        - composer.json
+    paths:
+      - vendor
+    policy: pull
+  script:
+    - ls -la
+    - echo $VERSION > VERSION
+    - docker build -t $DOCKER_IMAGE .
+    - build/push.sh -r $DOCKER_REGISTRY -n $DOCKER_REGISTRY_NAMESPACE -i $DOCKER_IMAGE -u $DOCKER_USER -p $DOCKER_PASS
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH =~ /-stable$/'
+      when: always
+    - if: '$CI_COMMIT_BRANCH =~ /^feature-/'
+      when: manual
 
 deploy_dev:
-  only:
-    - /^v\d+\.\d+\.\d+-dev/
+  image: ansible/centos7-ansible
   stage: deploy
+  when: manual
   script:
+    - mkdir ~/.ssh/
+    - echo -e "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+    - echo -e "${ANSIBLE_HOSTS}" > ~/hosts
+    - echo -e "${ANSIBLE_PLAYBOOK}" > ~/playbook.yml
     - echo -e "${DEV_ENV}" > ./.env
-    - ansible-playbook ~/playbook.yml -i ~/hosts --extra-vars "stage=dev server_name=dev_server tag_name=${CI_COMMIT_TAG}"
-  allow_failure: false
+    - FULL_DOCKER_IMAGE=$REGISTRY/$REGISTRY_NAMESPACE/$DOCKER_IMAGE
+    - ansible-playbook ~/playbook.yml -i ~/hosts --extra-vars "stage=dev server_name=dev_server docker_image=$FULL_DOCKER_IMAGE"
