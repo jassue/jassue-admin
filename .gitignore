@@ -18,3 +18,5 @@ yarn-error.log
 /storage/laravels.pid
 /storage/laravels-timer-process.pid
 /storage/laravels-custom-processes.pid
+.DS_Store
+/public/*
