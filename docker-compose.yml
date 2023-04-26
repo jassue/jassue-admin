@@ -14,7 +14,7 @@ services:
       - WEB_DOCUMENT_ROOT=/app/public
     volumes:
       - ./:/app
-      - ./laravel.supervisor.conf:/opt/docker/etc/supervisor.d/laravel.conf
+      - ./build/laravel.supervisor.conf:/opt/docker/etc/supervisor.d/laravel.conf
 
 networks:
   default:
