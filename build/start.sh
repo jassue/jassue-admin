@@ -4,8 +4,8 @@ if [[ -z "$CONTAINER_UID" ]]; then
     export CONTAINER_UID="application"
 fi
 
-if [ -f VERSION ] ; then
-    export VERSION=`cat VERSION`
+if [ -f "$WORKDIR/VERSION" ] ; then
+    echo "export VERSION=$(cat "$WORKDIR/VERSION")" >> ~/.bashrc
 fi
 
 set -o pipefail  # trace ERR through pipes
