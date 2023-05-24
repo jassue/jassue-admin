@@ -1,7 +1,7 @@
 ## Jassue Admin
 Jassue Admin 是 Laravel8、Vue 实现前后端分离的后台管理系统。此项目为后端代码，前端代码移步 [jassue-admin-frontend](https://github.com/jassue/jassue-admin-frontend)
 
-demo登录入口：https://admin.lva.jassue.cn, 账号：` 18888888888 ` ,  密码：` 123456 `
+demo登录入口：https://lva.jassue.cn/admin, 账号：` 18888888888 ` ,  密码：` 123456 `
 
 ## 页面展示
 
