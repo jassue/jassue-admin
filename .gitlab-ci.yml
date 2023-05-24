@@ -69,7 +69,7 @@ npm:
       - public/css/
       - public/mix-manifest.json
 
-codestyle:
+code-style:
   stage: test
   script:
     - composer run lint
@@ -128,7 +128,7 @@ build-image:
     - docker build -t $DOCKER_IMAGE .
     - build/push.sh -r $DOCKER_REGISTRY -n $DOCKER_REGISTRY_NAMESPACE -i $DOCKER_IMAGE -u $DOCKER_USER -p $DOCKER_PASS
 
-deploy_dev:
+deploy-dev:
   extends: .build_and_deploy
   image: ansible/centos7-ansible
   stage: deploy
