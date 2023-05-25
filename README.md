@@ -71,7 +71,7 @@ php artisan migrate --seed
         - WEB_DOCUMENT_ROOT=/app/public
       volumes:
         - ./:/app
-        - ./laravel.supervisor.conf:/opt/docker/etc/supervisor.d/laravel.conf
+        - ./build/laravel.supervisor.conf:/opt/docker/etc/supervisor.d/laravel.conf
   
   networks:
     default:
@@ -99,11 +99,11 @@ php artisan migrate --seed
         - WEB_DOCUMENT_ROOT=/app/public
       volumes:
         - ./:/app
-        - ./laravel.supervisor.conf:/opt/docker/etc/supervisor.d/laravel.conf
-        - ./laravel-s.location-root.conf:/opt/docker/etc/nginx/vhost.common.d/10-location-root.conf
-        - ./laravel-s.php.conf:/opt/docker/etc/nginx/conf.d/10-php.conf
-        - ./laravel-s.location-php.conf:/opt/docker/etc/nginx/vhost.common.d/10-php.conf
-        - ./laravel-s.supervisor.conf:/opt/docker/etc/supervisor.d/php-fpm.conf
+        - ./build/laravel.supervisor.conf:/opt/docker/etc/supervisor.d/laravel.conf
+        - ./build/laravel-s.location-root.conf:/opt/docker/etc/nginx/vhost.common.d/10-location-root.conf
+        - ./build/laravel-s.php.conf:/opt/docker/etc/nginx/conf.d/10-php.conf
+        - ./build/laravel-s.location-php.conf:/opt/docker/etc/nginx/vhost.common.d/10-php.conf
+        - ./build/laravel-s.supervisor.conf:/opt/docker/etc/supervisor.d/php-fpm.conf
   
   networks:
     default:
